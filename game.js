@@ -113,13 +113,12 @@ var game = {
 		}
 	},
 	isWallCell: function (row, col) { // проверка принадлежности ячейки препятсвию
-		for ( var i = 0; i < this.snake.length; i++) {
-			var cell = this.wall;
-			if (cell.row == row && cell.col == col) {
-				return true;
+		for ( var i = 0; i < this.wall.length; i++) {
+			var cell = this.wall[i];
+				if (cell.row == row && cell.col == col) {
+					return true;
+				}
 			}
-		}
-
 		return false;
 	},
 	setEvents: function () {
@@ -162,10 +161,10 @@ var game = {
 
 		}
 	},
-	checkCell: function (row, col) { // проверка принадлежности следующей ячейки полю
-		if (row < 0 || row >= this.size || col < 0 || col >= this.size) {
-			return false;
-		}
+	checkCell: function (row, col) { // проверка принадлежности следующей ячейки змее и препятсвию
+		//if (row < 0 || row >= this.size || col < 0 || col >= this.size) {
+		//	return false;
+		//}
 
 		if ( this.isSnakeCell (row, col) || this.isWallCell (row, col)) {
 			return false;
@@ -177,6 +176,7 @@ var game = {
 	over: function () { // завершение игры
 		alert("Game over!");
 		clearInterval(this.intervalId);
+		location.reload(true);
 	},
 	move: function () { // движение змеи
 		// смотрим направление движения
@@ -187,6 +187,15 @@ var game = {
 
 		if (!this.checkCell(row, col)) {
 			this.over();
+		}
+		if (row < 0) {
+			row = this.size - 1;
+		} else if (row >= this.size) {
+			row = 0;
+		} else if (col < 0) {
+			col = this.size - 1;
+		} else if (col >= this.size) {
+			col = 0;
 		}
 		//добавляем элемент в начало - создаем новую голову
 		this.snake.unshift({row: row, col: col});
