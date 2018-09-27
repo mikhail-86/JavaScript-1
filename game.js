@@ -7,7 +7,7 @@ var game = {
 	snake: [],
 	food: {},
 	foodCounter: 0,
-	wall: {},
+	wall: [],
 	direction: {
 		row: -1,
 		col: 0
@@ -42,6 +42,7 @@ var game = {
 		for ( var i =0; i< elements.length; i++ ) {
 			elements[i].classList.remove('snake-unit');
 			elements[i].classList.remove('food-unit');
+			elements[i].classList.remove('wall-unit');
 		}
 		for ( var i = 0; i < this.snake.length; i++) {
 			var cell = this.snake[i];
@@ -53,6 +54,13 @@ var game = {
 			var id = 'cell-' + this.food.row + '-' + this.food.col;
 			document.getElementById(id).classList.add('food-unit');
 			document.getElementById('foodcounter').innerHTML = 'Количество съеденой еды: ' + this.foodCounter;
+		}
+		for ( var i = 0; i < this.wall.length; i++) {
+			var cell = this.wall[i];
+			if (cell.row && cell.col) {
+				var id = 'cell-' + cell.row + '-' + cell.col;
+				document.getElementById(id).classList.add('wall-unit');
+			}
 		}
 	},
 	isSnakeCell: function (row, col) { // проверка принадлежности ячейки змее
@@ -78,6 +86,41 @@ var game = {
 
 		var index = random(0, pool.length);
 		this.food = pool[index];
+	},
+	isFood: function (row, col) {
+		var cell = this.food;
+		if (cell.row == row && cell.col == col) {
+			return true;
+		}
+
+	return false;
+	},
+	createWall: function () { // создание препятствий
+		console.log('create wall');
+		var pool = [];
+		var wallQuantity = random(1,10);
+		for ( var i = 0; i < this.size; i++ ) {
+			for ( var j = 0; j < this.size; j++ ) {
+				if (!this.isSnakeCell (i, j) || !this.isFood (i, j)) {
+					pool.push({row: i, col: j});
+				}
+			}
+		}
+
+		for ( var i = 0; i < wallQuantity; i++) {
+			var index = random(0, pool.length);
+			this.wall[i] = pool[index];
+		}
+	},
+	isWallCell: function (row, col) { // проверка принадлежности ячейки препятсвию
+		for ( var i = 0; i < this.snake.length; i++) {
+			var cell = this.wall;
+			if (cell.row == row && cell.col == col) {
+				return true;
+			}
+		}
+
+		return false;
 	},
 	setEvents: function () {
 		this.intervalID = setInterval(this.move.bind(this), 500);
@@ -124,7 +167,7 @@ var game = {
 			return false;
 		}
 
-		if ( this.isSnakeCell (row, col)) {
+		if ( this.isSnakeCell (row, col) || this.isWallCell (row, col)) {
 			return false;
 		}
 
@@ -155,6 +198,7 @@ var game = {
 			//еду съели
 			++this.foodCounter;
 			this.createFood();
+			this.createWall();
 		}
 
 		this.render();
@@ -166,6 +210,7 @@ var game = {
 		this.createSnake();
 		this.render();
 		this.createFood();
+		this.createWall();
 		this.setEvents();
 	}
 };
