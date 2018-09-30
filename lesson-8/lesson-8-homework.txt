@@ -10,7 +10,7 @@ alert(a);
 b.
 
 var b = function a(x) {
-x && a(--x);
+    x && a(--x);
 };
 alert(a);
 // браузер выведет undefined, потому что в название функции-выражения может использоваться только внутри самой функции
@@ -19,7 +19,7 @@ alert(a);
 c.
 
 function a(x) {
-return x * 2;
+    return x * 2;
 }
 var a;
 alert(a);
